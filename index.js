@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // Routes for site. Likely refactor later into separate files.
 app.get("/", function(req,res){
 	res.render("home")
-
+})
 
 
 // listner for server start
