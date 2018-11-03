@@ -1,0 +1,24 @@
+{
+  "name": "swcombine-nodejs",
+  "version": "1.0.0",
+  "description": "swc nodejs rewrite project",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Baugrems/swcombine-nodejs.git"
+  },
+  "author": "Baugrems",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Baugrems/swcombine-nodejs/issues"
+  },
+  "homepage": "https://github.com/Baugrems/swcombine-nodejs#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4"
+  }
+}
