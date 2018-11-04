@@ -6,7 +6,13 @@
 	<li>Focus on an integrated SWC Market</li>
 	<li>Purchase and Sell Entities</li>
 	<li>Database of Past sales</li>
-
 </ul>
+
+<ol>
+	<% results.forEach(result => { %>
+	<li><%= (result.handle) + " - Level: " + (result.XPLevel) %></li>
+	<% });%>
+</ol>
+
 
 <% include partials/footer %>
