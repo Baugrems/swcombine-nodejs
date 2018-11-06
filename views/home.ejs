@@ -8,11 +8,30 @@
 	<li>Database of Past sales</li>
 </ul>
 
-<ol>
+<form action="/" method="POST">
+<select name="shipclass">
+	<option value=0 <% if(shipClass == 0){%>selected <% } %>> Super Capitals</option>
+	<option value=1 <% if(shipClass == 1){%>selected <% } %>>Capitals</option>
+	<option value=2 <% if(shipClass == 2){%>selected <% } %>>Frigates</option>
+	<option value=3 <% if(shipClass == 3){%>selected <% } %>>Corvettes</option>
+	<option value=4 <% if(shipClass == 4){%>selected <% } %>>Heavy Freighters</option>
+	<option value=5 <% if(shipClass == 5){%>selected <% } %>>Light Freighters</option>
+	<option value=6 <% if(shipClass == 6){%>selected <% } %>>Gunboats</option>
+	<option value=7 <% if(shipClass == 7){%>selected <% } %>>Fighters</option>
+	<option value=8 <% if(shipClass == 8){%>selected <% } %>>Satellites</option>
+	<option value=9 <% if(shipClass == 9){%>selected <% } %>>Cargo Containers</option>
+	<option value=10 <% if(shipClass == 10){%>selected <% } %>>Debris</option>
+</select>
+<input type="submit" value="Submit">
+</form>
+
+<select>
 	<% results.forEach(result => { %>
-	<li><%= (result.handle) + " - Level: " + (result.XPLevel) %></li>
+	<% if(result.visible == 1 && result.class == shipClass) { %>
+	<option><%= (result.name) %></option>
+	<% } %>
 	<% });%>
-</ol>
+</select>
 
 
 <% include partials/footer %>

@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+var shipClass = 0;
 
 app.use(express.static(__dirname + '/public'));
 app.set("view engine", "ejs");
@@ -23,23 +24,31 @@ con.connect(function(err) {
 
 
 // TEST QUERY FOR DATABASE
-// con.query('SELECT * FROM factionTypes', function (error, results, fields) {
-//     if (error)
-//         throw error;
+con.query('SELECT name FROM shipTypes WHERE class=2 ORDER BY name ASC', function (error, results, fields) {
+    if (error)
+        throw error;
 
-//     results.forEach(result => {
-//         console.log(result);
-//     });
-// });
+    results.forEach(result => {
+        console.log(result);
+    });
+});
 
 // Routes for site. Likely refactor later into separate files.
 app.get("/", function(req,res){
-	con.query('SELECT * FROM characters', function (error, results, fields) {
+	con.query('SELECT * FROM shipTypes ORDER BY name ASC', function (error, results, fields) {
 	if (error)
 		throw error;
-
-	res.render("home", {results: results});
+	res.render("home", {results: results, shipClass: shipClass});
 	});
+});
+
+app.post("/", function(req,res){
+  shipClass = req.body.shipclass
+  con.query('SELECT * FROM shipTypes ORDER BY name ASC', function (error, results, fields) {
+  if (error)
+    throw error;
+  res.render("home", {results: results, shipClass: shipClass});
+  });
 });
 
 // listner for server start
