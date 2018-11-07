@@ -2,6 +2,8 @@ var express = require("express");
 var app = express();
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
+const pug = require('pug');
+
 var shipClass = 0;
 
 app.use(express.static(__dirname + '/public'));
@@ -24,7 +26,7 @@ con.connect(function(err) {
 
 
 // TEST QUERY FOR DATABASE
-con.query('SELECT name FROM shipTypes WHERE class=2 ORDER BY name ASC', function (error, results, fields) {
+con.query('SELECT * FROM shipTypes', function (error, results, fields) {
     if (error)
         throw error;
 
