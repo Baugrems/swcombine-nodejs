@@ -10,6 +10,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 <!-- Tab content -->
 <div id="Ships" class="tabcontent">
 	<h3>Ships</h3>
@@ -37,6 +38,8 @@
 </ol>
 >>>>>>> parent of 833fab5... Add selection for ships based on type
 =======
+=======
+>>>>>>> parent of e25bdf2... Moving to pug instead of EJS
 <form action="/" method="POST">
 <select name="shipclass">
 	<option value=0 <% if(shipClass == 0){%>selected <% } %>> Super Capitals</option>
@@ -53,6 +56,7 @@
 </select>
 <input type="submit" value="Submit">
 </form>
+<<<<<<< HEAD
 
 <select>
 	<% results.forEach(result => { %>
@@ -63,5 +67,16 @@
 </select>
 >>>>>>> parent of e25bdf2... Moving to pug instead of EJS
 
+=======
+
+<select>
+	<% results.forEach(result => { %>
+	<% if(result.visible == 1 && result.class == shipClass) { %>
+	<option><%= (result.name) %></option>
+	<% } %>
+	<% });%>
+</select>
+
+>>>>>>> parent of e25bdf2... Moving to pug instead of EJS
 
 <% include partials/footer %>

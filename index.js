@@ -3,8 +3,11 @@ var app = express();
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 <<<<<<< HEAD
+<<<<<<< HEAD
 const pug = require('pug');
 
+=======
+>>>>>>> parent of e25bdf2... Moving to pug instead of EJS
 var shipClass = 0;
 =======
 >>>>>>> parent of 833fab5... Add selection for ships based on type
@@ -30,7 +33,11 @@ con.connect(function(err) {
 
 // TEST QUERY FOR DATABASE
 <<<<<<< HEAD
+<<<<<<< HEAD
 con.query('SELECT * FROM shipTypes', function (error, results, fields) {
+=======
+con.query('SELECT name FROM shipTypes WHERE class=2 ORDER BY name ASC', function (error, results, fields) {
+>>>>>>> parent of e25bdf2... Moving to pug instead of EJS
     if (error)
         throw error;
 =======
