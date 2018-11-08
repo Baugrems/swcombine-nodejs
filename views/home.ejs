@@ -7,17 +7,8 @@
 	<li>Purchase and Sell Entities</li>
 	<li>Database of Past sales</li>
 </ul>
-<!-- Tab links -->
-<div class="tab">
-  <button class="tablinks" onclick="openType(event, 'Ships')">Ships</button>
-  <button class="tablinks" onclick="openType(event, 'Vehicles')">Vehicles</button>
-  <button class="tablinks" onclick="openType(event, 'Droids')">Droids</button>
-  <button class="tablinks" onclick="openType(event, 'Creatures')">Creatures</button>
-  <button class="tablinks" onclick="openType(event, 'Items')">Items</button>
-  <button class="tablinks" onclick="openType(event, 'Facilities')">Facilities</button>
-  <button class="tablinks" onclick="openType(event, 'Services')">Other</button>
-</div>
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <!-- Tab content -->
 <div id="Ships" class="tabcontent">
@@ -45,44 +36,32 @@
 	<% });%>
 </ol>
 >>>>>>> parent of 833fab5... Add selection for ships based on type
+=======
+<form action="/" method="POST">
+<select name="shipclass">
+	<option value=0 <% if(shipClass == 0){%>selected <% } %>> Super Capitals</option>
+	<option value=1 <% if(shipClass == 1){%>selected <% } %>>Capitals</option>
+	<option value=2 <% if(shipClass == 2){%>selected <% } %>>Frigates</option>
+	<option value=3 <% if(shipClass == 3){%>selected <% } %>>Corvettes</option>
+	<option value=4 <% if(shipClass == 4){%>selected <% } %>>Heavy Freighters</option>
+	<option value=5 <% if(shipClass == 5){%>selected <% } %>>Light Freighters</option>
+	<option value=6 <% if(shipClass == 6){%>selected <% } %>>Gunboats</option>
+	<option value=7 <% if(shipClass == 7){%>selected <% } %>>Fighters</option>
+	<option value=8 <% if(shipClass == 8){%>selected <% } %>>Satellites</option>
+	<option value=9 <% if(shipClass == 9){%>selected <% } %>>Cargo Containers</option>
+	<option value=10 <% if(shipClass == 10){%>selected <% } %>>Debris</option>
+</select>
+<input type="submit" value="Submit">
+</form>
 
-	<select>
-		<% results.forEach(result => { %>
-		<% if(result.visible == 1 && result.class == shipClass) { %>
-		<option><%= (result.name) %></option>
-		<% } %>
-		<% });%>
-	</select>
-</div>
+<select>
+	<% results.forEach(result => { %>
+	<% if(result.visible == 1 && result.class == shipClass) { %>
+	<option><%= (result.name) %></option>
+	<% } %>
+	<% });%>
+</select>
+>>>>>>> parent of e25bdf2... Moving to pug instead of EJS
 
-<div id="Vehicles" class="tabcontent">
-  <h3>Vehicles</h3>
-  <p>Coming SoonTM</p> 
-</div>
-
-<div id="Droids" class="tabcontent">
-  <h3>Droids</h3>
-  <p>Coming SoonTM</p>
-</div>
-
-<div id="Creatures" class="tabcontent">
-  <h3>Creatures</h3>
-  <p>Coming SoonTM</p>
-</div>
-
-<div id="Items" class="tabcontent">
-  <h3>Items</h3>
-  <p>Coming SoonTM</p>
-</div>
-
-<div id="Facilities" class="tabcontent">
-  <h3>Facilities</h3>
-  <p>Coming SoonTM</p>
-</div>
-
-<div id="Services" class="tabcontent">
-  <h3>Services/Other</h3>
-  <p>Coming SoonTM</p>
-</div>
 
 <% include partials/footer %>
