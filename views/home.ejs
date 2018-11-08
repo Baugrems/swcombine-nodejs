@@ -18,6 +18,7 @@
   <button class="tablinks" onclick="openType(event, 'Services')">Other</button>
 </div>
 
+<<<<<<< HEAD
 <!-- Tab content -->
 <div id="Ships" class="tabcontent">
 	<h3>Ships</h3>
@@ -37,6 +38,13 @@
 		</select>
 		<input type="submit" value="Submit">
 	</form>
+=======
+<ol>
+	<% results.forEach(result => { %>
+	<li><%= (result.handle) + " - Level: " + (result.XPLevel) %></li>
+	<% });%>
+</ol>
+>>>>>>> parent of 833fab5... Add selection for ships based on type
 
 	<select>
 		<% results.forEach(result => { %>
