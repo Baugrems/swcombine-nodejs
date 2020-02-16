@@ -1,0 +1,818 @@
+/**
+ * Get all elements with the given class.
+*/
+function getElementsByClass(searchClass, node, tag) {
+    var classElements = new Array();
+    if ( node == null )
+        node = document;
+    if ( tag == null )
+        tag = '*';
+    var els = node.getElementsByTagName(tag);
+    var elsLen = els.length;
+    var pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)");
+    for (i = 0, j = 0; i < elsLen; i++) {
+        if ( pattern.test(els[i].className) ) {
+            classElements[j] = els[i];
+            j++;
+        }
+    }
+    return classElements;
+}
+
+/**
+ * Disable all submit and reset type of buttons in the given form.
+ * Add to the form to make it disable submit buttons:
+ *  onSubmit="return disableForm(this);"
+ * When using this, the value of the submit button will not be sent to the server.
+ */
+function disableForm(theform) {
+    if(document.all || document.getElementById) {
+        for (i = 0; i <  theform.length; i++) {
+            var tempobj = theform.elements[i];
+            if (tempobj.type.toLowerCase() == "submit" || tempobj.type.toLowerCase() == "reset") {
+                tempobj.disabled = true;
+            }
+        }
+    }
+    return true;
+}
+
+
+/**
+ * Unused?
+ *
+*/
+function openWin(file, window, features) {
+     msgWindow=open('', window, features);
+     msgWindow.location.href = file;
+     if (msgWindow.opener == null) msgWindow.opener = self;
+}
+
+/**
+ * Used for the highlight on mouseover
+ *
+*/
+function ChangeClass(strID, strClass) {
+    var objElem = document.getElementById(strID);
+    objElem.className = strClass;
+}
+
+function toggler() {
+    for(var i=0; i<arguments.length; i++) {
+        $jQ('#' + arguments[i]).toggle();
+    }
+};
+
+// souce: http://dean.edwards.name/weblog/2005/10/add-event/
+// Copyright and what not belongs to Dean Edwards.
+function addEvent(element, type, handler) {
+    // assign each event handler a unique ID
+    if (!handler.$$guid) handler.$$guid = addEvent.guid++;
+    // create a hash table of event types for the element
+    if (!element.events) element.events = {};
+    // create a hash table of event handlers for each element/event pair
+    var handlers = element.events[type];
+    if (!handlers) {
+        handlers = element.events[type] = {};
+        // store the existing event handler (if there is one)
+        if (element["on" + type]) {
+            handlers[0] = element["on" + type];
+        }
+    }
+    // store the event handler in the hash table
+    handlers[handler.$$guid] = handler;
+    // assign a global event handler to do all the work
+    element["on" + type] = handleEvent;
+};
+
+// a counter used to create unique IDs
+addEvent.guid = 1;
+
+
+function removeEvent(element, type, handler) {
+    // delete the event handler from the hash table
+    if (element.events && element.events[type]) {
+        delete element.events[type][handler.$$guid];
+    }
+};
+
+
+function handleEvent(event) {
+    var returnValue = true;
+    // grab the event object (IE uses a global event object)
+    event = event || fixEvent(window.event);
+    // get a reference to the hash table of event handlers
+    var handlers = this.events[event.type];
+    // execute each event handler
+    for (var i in handlers) {
+        this.$$handleEvent = handlers[i];
+        if (this.$$handleEvent(event) === false) {
+            returnValue = false;
+        }
+    }
+    return returnValue;
+};
+
+
+function fixEvent(event) {
+    // add W3C standard event methods
+    event.preventDefault = fixEvent.preventDefault;
+    event.stopPropagation = fixEvent.stopPropagation;
+    return event;
+};
+
+fixEvent.preventDefault = function() {
+    this.returnValue = false;
+};
+
+fixEvent.stopPropagation = function() {
+    this.cancelBubble = true;
+};
+
+/**
+ * Reload the page (or iframe it is in) when a element in the dropdown menu is selected
+*/
+function menuLoadPage(menuName) {
+    var url = document.getElementById(menuName).value;
+    if(url != "") {
+        window.location.replace(url);
+    }
+}
+
+function setCoordsFromSystem() {
+    var selected = $jQ('#systemID').find(':selected');
+    $jQ('#destX').val(selected.data('galx'));
+    $jQ('#destY').val(selected.data('galy'));
+}
+
+/**
+ * JavaScript implementation of the PHP number_format function, except it only adds commas. Nicked from some site.
+*/
+function number_format(nStr) {
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+
+/**
+ * Does this element ID exist?
+ * @return boolean
+*/
+function doesExist(strItemID) {
+    var objElement = $(strItemID);
+    if(typeof objElement == 'object' && objElement != null) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Given value and valueMax variables this'll work out that colour it value represents of valueMax. Defaults to red being low and green being high.
+ *
+ * @param int $intValue
+ * @param int $intValueMax
+ * @param int $intColourMode - 0: red low, green high. 1: green low, red high.
+ * @return string "intRed, intGreen, intBlue"
+ */
+function getPercentageColour(intValue, intValueMax, intColourMode) {
+    if(intValueMax > 0) {
+        intPercentage = intValue / intValueMax;
+    }
+
+    if(intPercentage <= 0.5) {
+        if(intColourMode == 1) {
+            intRed = 0 + 255 * intPercentage;
+            intGreen = 168;
+            intBlue = 45;
+        } else {
+            intRed = 255 ;
+            intGreen = 0 + 2 * 255 * intPercentage;
+            intBlue = 0;
+        }
+    } else {
+        if(intColourMode == 1) {
+            intRed = 255;
+            intGreen = 255 - 255 * intPercentage;
+            intBlue = 0;
+        } else {
+            intRed = 255 - 255 * intPercentage;
+            intGreen = 168;
+            intBlue = 45;
+        }
+    }
+
+    intRed = Math.round(intRed);
+    intGreen = Math.round(intGreen);
+    intBlue = Math.round(intBlue);
+
+    return intRed + ', ' + intGreen + ', ' + intBlue;
+}
+
+
+/**
+ * Get the current scroll position in pixels.
+ *
+*/
+function getScrollPosition(strReturn) {
+    var intLeft = 0, intTop = 0;
+
+    if(typeof(window.pageXOffset) != 'undefined') {
+        intLeft = window.pageXOffset;
+        intTop = window.pageYOffset;
+    } else if(document.documentElement && (document.documentElement.scrollLeft || document.documentElement.scrollTop)) {
+        intLeft = document.documentElement.scrollLeft;
+        intTop = document.documentElement.scrollTop;
+    } else if(document.body && (document.body.scrollLeft || document.body.scrollTop)) {
+        //-- IE 4 compatible
+        intLeft = document.body.scrollLeft;
+        intTop = document.body.scrollTop;
+    }
+
+    if(strReturn == 'top') {
+        return intTop;
+    } else {
+        return intLeft;
+    }
+}
+
+
+/**
+ * Move the given element to the centre of the screen.
+*/
+function moveElementToScreenCenter(strElementId) {
+    //-- Get Windows dimension
+    var intScreenHeight = $jQ(window).height();
+    var intScreenWidth = $jQ(window).width();
+
+    //-- Move element to center of screen
+    var objElement = document.getElementById(strElementId);
+
+    //-- Get Height and Width of Element
+    var intElementHeight = objElement.offsetHeight;
+    var intElementWidth = objElement.offsetWidth;
+
+    if(objElement.style.position == 'fixed') {
+        objElement.style.left = Math.max(0, ((intScreenWidth / 2) - (intElementWidth / 2)))+"px";
+        objElement.style.top = Math.max(0, ((intScreenHeight / 2) - (intElementHeight  / 2)))+"px";
+    } else {
+        objElement.style.left = Math.max(0, ((intScreenWidth / 2) - (intElementWidth / 2) + getScrollPosition('left')))+"px";
+        objElement.style.top = Math.max(0, ((intScreenHeight / 2) - (intElementHeight  / 2) + getScrollPosition('top')))+"px";
+    }
+}
+
+function moveElementToCursor(strElementId, event, offsetX, offsetY) {
+    var objElement = document.getElementById(strElementId);
+
+    objElement.style.left = (event.pageX  + offsetX) + "px";
+    objElement.style.top = (event.pageY + offsetY) + "px";
+}
+
+/**
+ * Controls the filter menu on the events pages.
+ *
+ * @param objEventTypes - SELECT menu element of the event types.
+ * @param intMode - $_GET['mode']
+*/
+function eventsFilter(objEventTypes, intMode) {
+    var intEventType = parseInt(objEventTypes.options[objEventTypes.selectedIndex].value);
+
+    if(isNaN(intEventType)) {
+        document.location = "/members/events/?mode=" + intMode;
+    } else {
+        document.location = "/members/events/?mode=" + intMode + "&intEventType=" + intEventType;
+    }
+}
+
+/**
+ * Set cookie - used on the menus.
+ *
+*/
+function setcookie(name, value, expires, path, domain, secure) {
+    var value = getCookie(name);
+    if(value=="show") {
+        value = "none";
+    } else if(value=="none") {
+        value = "block"
+    } else {
+        value = "none";
+    }
+
+    document.cookie= name + "=" + escape(value) +
+        "; expires=Tue, 29 Nov 2050 12:43:30 GMT" +
+        "; path=/" +
+        ((COOKIE_DOMAIN) ? "; domain=" + COOKIE_DOMAIN : "") +
+        ((secure) ? "; secure" : "");
+}
+
+function setcookieValue(name, value, expires, path, domain, secure) {
+    document.cookie= name + "=" + escape(value) + "; expires=Tue, 29 Nov 2050 12:43:30 GMT" + "; path=/" + ((COOKIE_DOMAIN) ? "; domain=" + COOKIE_DOMAIN : "") + ((secure) ? "; secure" : "");
+}
+
+/**
+ * Get cookie - for use on the menus
+ */
+function getCookie(name) {
+    var start = document.cookie.indexOf( name + "=" );
+    var len = start + name.length + 1;
+    if ( ( !start ) && ( name != document.cookie.substring( 0, name.length ) ) ) {
+        return null;
+    }
+    if ( start == -1 ) return null;
+    var end = document.cookie.indexOf( ";", len );
+    if ( end == -1 ) end = document.cookie.length;
+    return unescape( document.cookie.substring( len, end ) );
+}
+
+/*
+ * See createInventoryMenu in darkness.inc for use
+*/
+function MenuShowPersonal() {
+    setcookieValue('menu_inv', 1);
+    $jQ('#inventoryfaction').hide();
+    $jQ('#inventorypersonal').show();
+}
+
+
+function MenuShowFaction() {
+    setcookieValue('menu_inv', 20);
+    $jQ('#inventoryfaction').show();
+    $jQ('#inventorypersonal').hide();
+}
+
+function loadMenu() {
+    if(getCookie('menu_inv') != 20){
+        MenuShowPersonal();
+    } else {
+        MenuShowFaction();
+    }
+}
+
+/**
+ * JavaScript to Un/Check all checkboxes on a given form.
+ * link should be in the form of <a href="" onclick="checkAll(formName, checkboxName)>link</a>
+ *
+*/
+var bolChecked = false;
+
+function checkAll(strFormID, strElementName) {
+    var intCount = document.forms[strFormID].elements[strElementName].length;
+    var arrElements = document.forms[strFormID].elements[strElementName];
+    var objElement = null;
+
+    //-- One checkbox will return as a checkbox element, not an array, so turn it into one.
+    if(document.forms[strFormID].elements[strElementName].name == strElementName) {
+        intCount = 1;
+        arrElements = new Array(arrElements);
+    }
+
+    for(var i = 0; i < intCount; i++) {
+        objElement = arrElements[i];
+
+        if(bolChecked == false){
+            objElement.checked = true;
+            intTotalChecked++;
+        } else {
+            objElement.checked = false;
+        }
+    }
+
+    bolChecked = (bolChecked == true) ? false : true;
+};
+
+
+/**
+ * Check/Uncheck all elements with this attribute set to this value.
+*/
+var intTotalChecked = 0;
+function checkAllWithAttributeValue(strFormID, strElementName, strAttributeName, strAttributeValue) {
+    var intCount = document.forms[strFormID].elements[strElementName].length;
+    var arrElements = document.forms[strFormID].elements[strElementName];
+    var objElement = null;
+    var funcs = {
+        getAttr: function(ele, attr) {
+            var result = (ele.getAttribute && ele.getAttribute(attr)) || null;
+            if(!result) {
+                var attrs = ele.attributes;
+                var length = attrs.length;
+                for(var i = 0; i < length; i++) {
+                    if(attrs[i].nodeName === attr) {
+                        result = attrs[i].nodeValue;
+                    }
+                }
+            }
+            return result;
+        }
+    };
+
+    intTotalChecked = 0;
+
+    //-- One checkbox will return as a checkbox element, not an array, so turn it into one.
+    if(document.forms[strFormID].elements[strElementName].name == strElementName) {
+        intCount = 1;
+        arrElements = new Array(arrElements);
+    }
+
+    for(var i = 0; i < intCount; i++) {
+        objElement = arrElements[i];
+
+        //-- IE doesn't support native has/getAttribute functions (well I never!)
+        if(funcs.getAttr(arrElements[i],strAttributeName) == strAttributeValue) {
+            objElement.checked = true;
+            intTotalChecked++;
+        } else {
+            objElement.checked = false;
+        }
+    }
+};
+
+
+/**
+ * Because Prototype is a knob.
+ */
+function fireEvent(element, event) {
+    if (document.createEventObject){
+        // dispatch for IE
+        var evt = document.createEventObject();
+        return element.fireEvent('on'+event,evt)
+    } else {
+        // dispatch for firefox + others
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent(event, true, true ); // event type,bubbling,cancelable
+        return !element.dispatchEvent(evt);
+    }
+};
+
+/* changeState: changes the state of checkboxes */
+function changeState(strElemID, intIndex, arrImages) {
+    var objElem = document.getElementById(strElemID+"["+intIndex+"]['img']");
+    var objVal = document.getElementById(strElemID + "["+intIndex+"][0]");
+    var intImageIndex = parseInt(objVal.value) + 1;
+    if(intImageIndex == arrImages.length) {
+        intImageIndex = 0;
+    }
+
+    objElem.src = arrImages[intImageIndex];
+    objVal.value = intImageIndex;
+};
+
+
+// For nominated checkboxes we allow clicks on their parent elements to act as clicks on themselves.
+// Requires jQuery
+$jQ(document).ready(function() {
+    loadMenu();
+
+    $jQ(".parental_checkbox")
+        .click(function(event) {
+            event.stopPropagation();
+        })
+        .css('cursor', 'pointer')
+        .parent()
+        .css('cursor', 'pointer')
+        .click(function() {
+            var checkbox = $jQ(this).children(".parental_checkbox");
+            if(checkbox.prop("checked")) {
+                checkbox.prop("checked", false);
+            } else {
+                checkbox.prop("checked", true);
+            }
+            checkbox.trigger("change");
+        });
+});
+
+var clockYearChange = true;
+var clockDayChange = true;
+var clockHourChange = true;
+var clockMinChange = true;
+var clockDisplay = false;
+
+//-- Function to update the live clock
+function showclock() {
+    if(!document.getElementById('clocksecond')){ return; }
+
+    var leapYearDays = 0;
+    clockSecond ++;
+
+    if(clockSecond == 60) {
+        clockMinute ++;
+        clockSecond = 0;
+        clockMinChange = true;
+    }
+    if(clockMinute == 60) {
+        clockHour ++;
+        clockMinute = 0;
+        clockHourChange = true;
+    }
+    if(clockHour == 24) {
+        clockDay ++;
+        clockHour = 0;
+        clockDayChange = true;
+    }
+    if(clockDay == 366) {
+        clockYear ++;
+        clockDay = 1;
+        clockYearChange = true;
+    }
+
+    if(clockDisplay){
+        if(clockSecond <= 9){
+            document.getElementById('clocksecond').innerHTML = '0'+clockSecond;
+        } else {
+            document.getElementById('clocksecond').innerHTML = clockSecond;
+        }
+
+        if(clockMinChange){
+            if(clockMinute <= 9){
+                document.getElementById('clockminute').innerHTML = '0'+clockMinute;
+            } else {
+                document.getElementById('clockminute').innerHTML = clockMinute;
+            }
+        }
+
+        if(clockHourChange){
+            if(clockHour <= 9) {
+                document.getElementById('clockhour').innerHTML = '0'+clockHour;
+            } else {
+                document.getElementById('clockhour').innerHTML = clockHour;
+            }
+        }
+
+        if(clockDayChange){
+            document.getElementById('clockday').innerHTML = clockDay;
+        }
+        if(clockYearChange){
+            document.getElementById('clockyear').innerHTML = clockYear;
+        }
+    }
+
+    //--Pause the function for 1 second, then execute it again
+    if(tickClock) {
+        setTimeout("showclock()", 1000);
+    }
+
+    clockDayChange = false;
+    clockHourChange = false;
+    clockMinChange = false;
+    clockYearChange = false;
+}
+
+// finds and starts the timer for any clock found on the page
+function findCountDownClocks() {
+    $jQ('.countdown_clock').each(function() {
+        var countdown = $jQ(this);
+        var years = countdown.data('years');
+        var days = countdown.data('days');
+        var hours = countdown.data('hours');
+        var minutes = countdown.data('minutes');
+        var seconds = countdown.data('seconds');
+        var showSeconds = parseInt(countdown.data('showseconds'));
+        var small = parseInt(countdown.data('small'));
+        countdown.removeClass('countdown_clock');
+        showCountDown(countdown, years, days, hours, minutes, seconds, showSeconds, small);
+    });
+}
+
+//Function to update the live ETA ticker
+function showCountDown(element, years, days, hours, minutes, seconds, showSeconds, small, start) {
+    var now = Math.floor((new Date().getTime() / 1000));
+    if(start === undefined){
+        start = now;
+    }
+    var elapsed = Math.max(0, Math.floor(now - start));
+
+    seconds -= elapsed;
+    while(seconds < 0) {
+        minutes--;
+        seconds += 60;
+    }
+    while(minutes < 0) {
+        hours--;
+        minutes += 60;
+    }
+    while(hours < 0) {
+        days--;
+        hours += 24;
+    }
+    if(days < 0) {
+        element.empty();
+        if(!small) {
+            window.location = window.location.href;
+        }
+
+    } else {
+        if(seconds <= 9){
+            seconds = '0'+seconds;
+        }
+        if(minutes <= 9) {
+            minutes = '0'+minutes;
+        }
+
+        var text = '';
+        if(small) {
+            if(showSeconds){
+                if(years == 0) {
+                    if(days == 0) {
+                        if(hours == 0) {
+                            text = minutes+"M "+seconds+"S";
+                        } else {
+                            text = hours+"H "+minutes+"M "+seconds+"S";
+                        }
+
+                    } else {
+                        text = days+"D "+hours+"H "+minutes+"M "+seconds+"S";
+                    }
+                } else {
+                    text = years+"Y "+days+"D "+hours+"H "+minutes+"M "+seconds+"S";
+                }
+            } else {
+                if(years == 0) {
+                    if(days == 0) {
+                        if(hours == 0) {
+                            text = minutes+"M";
+                        } else {
+                            text = hours+"H "+minutes+"M";
+                        }
+                    } else {
+                        text = days+"D "+hours+"H "+minutes+"M";
+                    }
+                } else {
+                    text = years+"Y "+days+"D "+hours+"H "+minutes+"M";
+                }
+            }
+        } else {
+            if(showSeconds){
+                if(years == 0) {
+                    if(days == 0 && hours == 0) {
+                        text = minutes+" Minutes "+seconds+" Seconds";
+                    } else if(days == 0) {
+                        text = hours+" Hours "+minutes+" Minutes "+seconds+" Seconds";
+                    } else {
+                        text = days+" Days "+hours+" Hours "+minutes+" Minutes "+seconds+" Seconds";
+                    }
+                } else {
+                    text = years+" Years "+days+" Days "+hours+" Hours "+minutes+" Minutes "+seconds+" Seconds";
+                }
+            } else {
+                if(years == 0) {
+                    if(days == 0) {
+                        if(hours == 0) {
+                            text = minutes+" Minutes";
+                        } else {
+                            text = hours+" Hours "+minutes+" Minutes";
+                        }
+                    } else {
+                        text = days+" Days "+hours+" Hours "+minutes+" Minutes";
+                    }
+                } else {
+                    text = years+" Years "+days+" Days "+hours+" Hours "+minutes+" Minutes";
+                }
+            }
+        }
+        if(element.text() != text){
+            element.text(text);
+        }
+
+        //Pause the function for one second, then execute again
+        setTimeout(function(){
+            showCountDown(element, years, days, hours, parseInt(minutes, 10), parseInt(seconds, 10), showSeconds, small, now);
+        }, 1000);
+    }
+}
+
+$jQ(findCountDownClocks);
+
+$jQ(document).ready(function(){
+    clockDisplay = true;
+    showclock();
+});
+
+/**
+ * Returns time since Unix epoch in seconds.
+ * @returns
+ */
+function getNow() {
+    return Math.round(new Date().getTime() / 1000);
+}
+
+$jQ(document).ready(function() {
+    setTimeout(swc.notifications.ask, 2000);
+});
+
+$jQ(function() {
+    $jQ('.ui-toggler').click(function() {
+        var target = $jQ(this).attr('data-target');
+        $jQ('#' + target).toggle('blind', {});
+    });
+});
+
+function rezebra() {
+    $jQ('table.zebra').each(function(i, e) {
+        $jQ(e).find('> tbody > tr:not(.ignorezebra):visible:odd').removeClass('even').addClass('odd');
+        $jQ(e).find('> tbody > tr:not(.ignorezebra):visible:even').removeClass('odd').addClass('even');
+    });
+    $jQ('div.zebra').each(function(i, e) {
+        $jQ(e).find('> div:visible:odd').removeClass('even').addClass('odd');
+        $jQ(e).find('> div:visible:even').removeClass('odd').addClass('even');
+    });
+}
+
+$jQ(document).ready(function() {
+    $jQ('.menuswapper').on('click', 'li',
+        function() {
+            $jQ('.menuswapper .selected').removeClass('selected');
+            $jQ(this).addClass('selected');
+        }
+    );
+
+    /**
+     * Add class zebra to a table or div and it will populate odd/even classes on the rows.
+     */
+
+    rezebra();
+    if(typeof less !== 'undefined') {
+        less.pageLoadFinished.then(rezebra);
+    }
+
+    /**
+     * A filter that shows/hides things based on searchtext.
+     * Set ".qs_filter" on the text input. Add "data-target-selector" to the text input.
+     * Make sure things to be filtered have a "data-searchtext" attribute to search against.
+     */
+    $jQ('.qs_filter').each(function(i, filter){
+        $jQ(filter).keyup(function(){
+            var query = $jQ(filter).val().toLowerCase();
+            var target_selector = $jQ(filter).attr('data-target-selector');
+
+            $jQ(target_selector).each(function(j, item){
+                var searchtext = $jQ(item).attr('data-searchtext').toLowerCase();
+
+                var show = qs_matches(query, searchtext);
+                if(show) {
+                    $jQ(item).show();
+                } else {
+                    $jQ(item).hide();
+                }
+            });
+
+            rezebra();
+        });
+    });
+});
+
+
+function qs_matches(query, searchtext) {
+    query = query.toLowerCase();
+    searchtext = searchtext.toLowerCase();
+
+    var show = true;
+    $jQ(query.split(" ")).each(function(j, queryTerm) {
+        if(queryTerm.startsWith("-")) {
+            queryTerm = queryTerm.substring(1);
+            if(queryTerm && searchtext.indexOf(queryTerm) != -1){
+                show = false;
+            }
+        } else {
+            if(searchtext.indexOf(queryTerm) == -1){
+                show = false;
+            }
+        }
+    });
+    return show;
+}
+
+
+$jQ(document).ready(function() {
+    /**
+     * Movable things
+     */
+    $jQ('.ui-draggable').draggable({
+        handle: '.ui-drag-handle',
+        cancel: '.ui-draggable-disabled'
+    });
+});
+
+
+function htmlEscape(str) {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// I needed the opposite function today, so adding here too:
+function htmlUnescape(str){
+    return str
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&');
+}

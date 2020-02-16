@@ -1,0 +1,246 @@
+var swc = window.swc || {};
+swc.ajax = swc.ajax || {};
+swc.ajax.spinner = swc.ajax.spinner || {};
+
+swc.sendCommand = function(cls, method, args, error, ajaxError){
+    args  = args || [];
+    error = error || function(){};
+
+    var data = {args: []};
+    data.args.push(cls);
+    data.args.push(method);
+    for(var i = 0; i < args.length; i++){
+        data.args.push(args[i]);
+    }
+
+    if(ajaxError === undefined) {
+        ajaxError = function(result, stat) {
+            swc.flash('An error occurred making an ajax call ' + cls + ' -> ' + method + ' with args ' + data.args.join() + '<br />' +
+                      'The error was: ' + stat, 'red');
+            if(this.spinner !== undefined) {
+                swc.ajax.spinner.hide(this.spinner);
+            }
+        }
+    }
+
+    //devmode disable
+    if(window.location.href.indexOf('disable_devmode') >= 0){
+        data.disable_devmode = 1;
+    }
+
+    // Spinner
+    swc.ajax.spinner.show();
+
+    $jQ.ajax({
+        url: "/ajax/ajax2.php",
+        type: "post",
+        data: data,
+        spinner: swc.ajax.spinner.get(),
+        success: function(result){
+            swc.parseResponse(result, error);
+
+            if(this.spinner !== undefined) {
+                swc.ajax.spinner.hide(this.spinner);
+            }
+        },
+        error: ajaxError,
+    });
+
+    swc.ajax.spinner.remove();
+};
+
+swc.ajax.spinner.set = function(element) {
+    if(element === undefined) {
+        if(IS_DEV_SERVER) {
+            alert('Spinner set to undefined');
+        }
+        console.log('Spinner is undefined');
+        return;
+    }
+    if(element instanceof Window) {
+        if(IS_DEV_SERVER) {
+            alert('Spinner set to window');
+        }
+        console.log('Spinner is the window');
+        return;
+    }
+
+    swc.ajax.spinner.target = $jQ(element);
+};
+
+swc.ajax.spinner.get = function() {
+    return swc.ajax.spinner.target;
+};
+
+swc.ajax.spinner.remove = function() {
+    delete swc.ajax.spinner.target;
+};
+
+swc.ajax.spinner.show = function() {
+    if(swc.ajax.spinner.target === undefined) {
+        return;
+    }
+
+    if(swc.ajax.spinner.target.is("input[type=checkbox]")) {
+        swc.ajax.spinner.target.hide();
+        swc.ajax.spinner.target.after("<img class='ajax_spinner ajax_checkbox_spinner' src='" + DARKNESS_IMAGES_PATHWEB + "/client/ajax/spinner.gif' />");
+    } else {
+        swc.ajax.spinner.target.after("<img class='ajax_spinner' src='" + DARKNESS_IMAGES_PATHWEB + "/client/ajax/spinner.gif' />");
+    }
+};
+
+swc.ajax.spinner.hide = function(spinner) {
+    if(spinner.is("input[type=checkbox]")) {
+        spinner.show();
+    }
+
+    spinner.next("img.ajax_spinner").remove();
+};
+
+swc.parseResponse = function(commands, error){
+    var result = null;
+
+    if(commands) {
+        var notificationsSent = 0;
+        $jQ.each(commands, function(index, command){
+            //error dispatcher
+            if(command[0] == 'failure'){
+                error();
+            }
+
+            //jquery dispatch
+            if(command[0] == 'jq'){
+                var operation = command[1];
+                var args = command[2];
+                var selector = args.shift();
+
+                var jq = $jQ(selector);
+                jq[operation].apply(jq, args);
+            }
+
+            //alert dispatcher
+            if(command[0] == 'alert'){
+                alert(command[1]);
+            }
+
+            //flash dispatcher
+            if(command[0] == 'flash'){
+                var args = command[1];
+                swc.flash(args[0], args[1], args[2]);
+            }
+
+            //refreshes the window
+            if(command[0] == 'refresh'){
+                window.location.reload();
+            }
+
+            //redirects the window to a url
+            if(command[0] == 'redirect'){
+                window.location = command[1];
+            }
+
+            if(command[0] == 'delayeval') {
+                setTimeout(function() { $jQ.globalEval(command[2]); }, command[1]);
+            }
+
+            //eval, runs some js code
+            if(command[0] == 'eval'){
+                $jQ.globalEval(command[1]);
+            }
+
+            //callable, run a function & pass data
+            if(command[0] == 'callable'){
+                $jQ.globalEval(command[1] + "(" + command[2] + ")");
+            }
+
+            // Webkit Notifications, like GMail
+            if(command[0] == 'notification'){
+                setTimeout(function() {
+                    swc.notifications.simple(command[1], command[2], command[3], command[4]);
+                }, notificationsSent * 1000);
+                notificationsSent++;
+            }
+
+            if(command[0] == 'result') {
+                result = command[1];
+            }
+        });
+    }
+
+    return result;
+};
+
+swc.flash = function(message, colour, id){
+    var idText = "";
+    if (id != null){
+        idText = 'id="'+id+'"';
+    }
+    $jQ('#'+id).remove();
+
+    $jQ('#flashmsgArea').append('<div '+idText+' class="flash-msg flash-'+colour+'">' +
+            '<img src="'+DARKNESS_IMAGES_PATHWEB+'/misc/close.png" onclick="$jQ(this).parent().slideUp()" />' +
+            message +
+            '</div>');
+};
+
+
+swc.notifications = {};
+
+swc.notifications.hasPermission = function() {
+    return (window.Notification && window.Notification.permission === 'granted');
+};
+
+swc.notifications.ask = function() {
+    if(LOGGED_IN === true && swc.player.notifications > 0) {
+        if (window.Notification) {
+            window.Notification.requestPermission(function(v) {
+                if(v == 'granted') {
+                     swc.events.start_notification_poller();
+                }
+            });
+        }
+    }
+};
+
+swc.notifications.simple = function(icon, title, body, link) {
+    var options = {};
+    options.icon = icon;
+    options.title = title;
+    options.body = body;
+    options.tag = 'swc_notification_' + Math.random();
+
+    if (window.Notification.permission === 'granted') {
+        let n = new Notification(options.title, options);
+        console.log("New notification: " + options.title);
+        if(link) {
+            n.onclick = function(event) {
+                event.preventDefault();
+                window.open(link).focus();
+            }
+        }
+    }
+};
+
+
+
+swc.events = {};
+
+swc.events.poller_interval = 90; // seconds
+swc.events.start_notification_poller = function() {
+    if(LOGGED_IN === true && swc.notifications.hasPermission() && swc.player.notifications > 0) {
+        swc.sendCommand("AjaxDesktopNotifications", "doNewEventNotifications", [], "", function(result, stat){ });
+
+        var timer = setInterval(function() {
+            // Stop the timer if we've lost permissions
+            if(!swc.notifications.hasPermission()) {
+                clearInterval(timer);
+                return;
+            }
+
+            var lastCheck = getCookie('event_notification_last_check');
+            if(lastCheck === null || lastCheck <= (getNow() - swc.events.poller_interval)) {
+                swc.sendCommand("AjaxDesktopNotifications", "doNewEventNotifications", [], "", function(result, stat){ });
+            }
+        }, (swc.events.poller_interval * 1000));
+    }
+};
